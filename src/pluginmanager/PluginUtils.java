@@ -10,20 +10,20 @@ import java.util.Properties;
  *
  * @author jayfella
  */
-public class PluginUtils
+public final class PluginUtils
 {
-    public static final String GIT_DATA_FILENAME = "jme-git.dat";
-    public static final String PLUGIN_DATA_FILENAME = "jmeplugin.properties";
-    
-    public static final String PROP_URL = "url";
-    public static final String PROP_BRANCH = "branch";
-    
+    public static String GIT_DATA_FILENAME = "jme-git.dat";
+    public static String PLUGIN_DATA_FILENAME = "jmeplugin.properties";
+
+    public static String PROP_URL = "url";
+    public static String PROP_BRANCH = "branch";
+
     public static FileFilter DirectoryFilter = new FileFilter()
     {
         @Override public boolean accept(File file) { return file.isDirectory(); }
     };
 
-    public static FileFilter FileFilter = new FileFilter()
+    public static final FileFilter FileFilter = new FileFilter()
     {
         @Override public boolean accept(File file) { return !file.isDirectory(); }
     };
@@ -34,7 +34,7 @@ public class PluginUtils
         File[] files = dir.listFiles();
         if (files == null)
             return false;
-        
+
 
         for (File file : files)
         {
@@ -107,5 +107,5 @@ public class PluginUtils
             return null;
         }
     }
-    
+
 }
