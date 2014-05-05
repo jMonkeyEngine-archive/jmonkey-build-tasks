@@ -10,6 +10,7 @@ import java.util.Properties;
  *
  * @author jayfella
  */
+
 public final class PluginUtils
 {
     public static String GIT_DATA_FILENAME = "jme-git.dat";
@@ -46,7 +47,6 @@ public final class PluginUtils
             if (manifestFile && buildFile) return true;
         }
 
-        System.out.println("Ignoring directory '" + dir.getName() + "' - Not a project.");
         return false;
     }
 
@@ -65,7 +65,8 @@ public final class PluginUtils
         if (!suitePropertiesFile.exists()) return false;
 
         // check the manifest file
-        File manifestFile = new File(dir.getAbsolutePath() + File.separatorChar + "manifest.mf");
+        // File manifestFile = new File(dir.getAbsolutePath() + File.separatorChar + "manifest.mf");
+        File manifestFile = this.getManifestFile(dir);
         if (!manifestFile.exists()) return false;
 
         // check if manifest.mf contains additional key:val data
@@ -89,11 +90,10 @@ public final class PluginUtils
         File bundlePropertiesFile = new File(bundlePropertiesPath);
         if (!bundlePropertiesFile.exists()) return false;
 
-        System.out.println("Ignoring directory '" + dir.getName() + "' - Already a plugin.");
         return true;
     }
 
-    public static Properties loadProperties(File propertiesFile)
+    public Properties loadProperties(File propertiesFile)
     {
         try (FileInputStream fis = new FileInputStream(propertiesFile))
         {
@@ -107,5 +107,62 @@ public final class PluginUtils
             return null;
         }
     }
+
+    // Used to circumvent case sensitivity in filenames.
+    public File getManifestFile(File directory)
+    {
+        File[] files = directory.listFiles();
+
+        for (File file : files)
+        {
+            if (file.isDirectory())
+                continue;
+
+            if (file.getName().equalsIgnoreCase("manifest.mf"))
+                return file;
+        }
+
+        return null;
+    }
+
+    private boolean firstRecursion = true;
+    private File foundFile = null;
+    public File recursiveSearch(File parentDir, final String filename)
+    {
+        if (firstRecursion)
+        {
+            foundFile = null;
+            firstRecursion = false;
+        }
+
+        FileFilter fileFilter = new FileFilter()
+        {
+            @Override public boolean accept(File pathname)
+            {
+                return (pathname.isFile() && pathname.getName().equalsIgnoreCase(filename));
+            }
+        };
+
+        File[] files = parentDir.listFiles(fileFilter);
+
+        if (files.length > 0)
+        {
+            foundFile = files[0];
+        }
+
+
+        File[] dirs = parentDir.listFiles(PluginUtils.DirectoryFilter);
+
+        for (File dir : dirs)
+        {
+            if (foundFile == null)
+                recursiveSearch(dir, filename);
+        }
+
+        firstRecursion = true;
+        return foundFile;
+    }
+
+
 
 }

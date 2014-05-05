@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.nio.file.Files;
 import java.util.Properties;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
@@ -13,9 +12,8 @@ import static pluginmanager.PluginUtils.DirectoryFilter;
 /**
  *
  * @author jayfella
+ * Sends a pull request on all plugins to retrieve the latest version.
  */
-
-// Sends a pull request on all plugins to retrieve the latest version.
 
 public class PluginUpdateFromGit extends Task
 {
@@ -27,7 +25,7 @@ public class PluginUpdateFromGit extends Task
     {
         if (pluginDirectory == null)
             throw new BuildException("No directory specified. Aborted.");
-        
+
         // has it been initialized by git?
         if (!isGitInitialized(pluginDirectory))
             return;
@@ -37,21 +35,23 @@ public class PluginUpdateFromGit extends Task
                     .append(File.separatorChar)
                     .append(PluginUtils.GIT_DATA_FILENAME)
                     .toString();
-            
+
             File gitDataFile = new File(gitDataPath);
         if (!gitDataFile.exists())
         {
             System.out.println("Ignoring directory '" + pluginDirectory.getName() + "' - Cannot locate '" + PluginUtils.GIT_DATA_FILENAME + "' file");
             return;
         }
-        
+
+        PluginUtils pluginUtils = new PluginUtils();
+
         // everything appears ok - pull all changes.
         try
         {
             System.out.println("Pulling " + pluginDirectory.getName() + "...");
 
-            Properties gitProperties = PluginUtils.loadProperties(gitDataFile);
-            
+            Properties gitProperties = pluginUtils.loadProperties(gitDataFile);
+
             String gitUrl = gitProperties.getProperty(PluginUtils.PROP_URL);
             String gitBranch = gitProperties.getProperty(PluginUtils.PROP_BRANCH);
 
@@ -64,11 +64,11 @@ public class PluginUpdateFromGit extends Task
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream())))
             {
                 String line;
-                
+
                 while ((line = reader.readLine()) != null)
                     System.out.println(line);
             }
-            
+
             process.waitFor();
         }
         catch (IOException | InterruptedException ex)
@@ -77,7 +77,7 @@ public class PluginUpdateFromGit extends Task
         }
 
     }
-    
+
     private boolean isGitInitialized(File dir)
     {
         File[] dirs = dir.listFiles(DirectoryFilter);
