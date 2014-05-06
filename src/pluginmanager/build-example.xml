@@ -1,0 +1,26 @@
+<!--
+    
+    PullNewPlugins - Gets all plugins from the given website, and then empties the list if given key is correct. Run once before compile. 
+    UpdateFromGit - Issues a PULL on all projects hosted on github. Run on each plugin/directory before compile.
+    ConvertToPlugin - Converts a regular project into a module if required. Run on each plugin/directory before compile.
+    AddToPluginSuite - Adds all new 'modules' to the module suite. Run last and once before or after compile.
+   
+-->
+
+<project name="pluginTasks" basedir="." default="use">
+        <target name="use" description="Plugin Updater and Converter">
+
+                <taskdef name="PullNewPlugins" classname="pluginmanager.PluginInitNewPlugins" classpath="PluginManager.jar" />
+                <PullNewPlugins suitedirectory="./" website="http://hub.jmonkeyengine.org/plugins/submissions.php?view=raw" key="password" />
+
+                <taskdef name="UpdateFromGit" classname="pluginmanager.PluginUpdateFromGit" classpath="PluginManager.jar" />
+                <UpdateFromGit directory="./World" />
+
+                <taskdef name="ConvertToPlugin" classname="pluginmanager.PluginConvertToPlugin" classpath="PluginManager.jar" />
+                <ConvertToPlugin directory="./World" />
+
+                <taskdef name="AddToPluginSuite" classname="pluginmanager.PluginCreateSuiteList" classpath="PluginManager.jar" />
+                <AddToPluginSuite suitedirectory="./" />
+
+        </target>
+</project>
