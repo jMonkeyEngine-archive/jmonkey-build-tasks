@@ -7,19 +7,10 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.Properties;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
-import org.w3c.dom.Document;
 
 /**
  *
@@ -43,26 +34,16 @@ public class PluginConvertToPlugin extends Task
         // is it actually a project?
         if (!pluginUtils.isProjectDir(pluginDirectory))
         {
-            System.out.println("Ignoring directory '" + pluginDirectory.getName() + "' - Not a project.");
+            System.out.println("Skipping directory '" + pluginDirectory.getName() + "' - Not a project.");
             return;
         }
 
         // is it already a plugin?
         if (pluginUtils.isPluginDir(pluginDirectory))
         {
-            System.out.println("Ignoring directory '" + pluginDirectory.getName() + "' - Already a plugin.");
+            System.out.println("Skipping directory '" + pluginDirectory.getName() + "' - Already a plugin.");
             return;
         }
-
-        /* String pluginDataFilePath = new StringBuilder()
-                .append(pluginDirectory.getAbsolutePath())
-                .append(File.separatorChar)
-                .append("src")
-                .append(File.separatorChar)
-                .append(PluginUtils.PLUGIN_DATA_FILENAME)
-                .toString();
-
-        File pluginDataFile = new File(pluginDataFilePath); */
 
         File pluginDataFile = pluginUtils.recursiveSearch(pluginDirectory, PluginUtils.PLUGIN_DATA_FILENAME);
 

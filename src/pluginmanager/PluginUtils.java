@@ -157,6 +157,8 @@ public final class PluginUtils
         {
             if (foundFile == null)
                 recursiveSearch(dir, filename);
+            else
+                break;
         }
 
         firstRecursion = true;

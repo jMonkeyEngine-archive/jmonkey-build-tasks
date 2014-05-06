@@ -17,9 +17,8 @@ import org.apache.tools.ant.Task;
 /**
  *
  * @author jayfella
+ * Retrieves the list of submitted plugins from jmonkey, initializes them, and then clears that list.
  */
-
-// Retrieves the list of plugins from jmonkey, initializes them, and finally clears the list.
 
 public class PluginInitNewPlugins extends Task
 {

@@ -5,9 +5,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
@@ -30,7 +28,6 @@ public class PluginCreateSuiteList extends Task
             throw new BuildException("No directory specified. Aborted.");
 
         PluginUtils pluginUtils = new PluginUtils();
-        // Map<String, String> pluginData = new HashMap<>();
         List<PluginData> pluginData = new ArrayList<>();
 
         File[] directories = suiteDirectory.listFiles(PluginUtils.DirectoryFilter);
@@ -39,13 +36,13 @@ public class PluginCreateSuiteList extends Task
         {
             if (!pluginUtils.isProjectDir(pluginDirectory))
             {
-                System.out.println("Ignoring directory '" + pluginDirectory.getName() + "' - Not a project.");
+                System.out.println("Skipping directory '" + pluginDirectory.getName() + "' - Not a project.");
                 continue;
             }
 
             if (!pluginUtils.isPluginDir(pluginDirectory))
             {
-                System.out.println("Ignoring directory '" + pluginDirectory.getName() + "' - Not a plugin.");
+                System.out.println("Skipping directory '" + pluginDirectory.getName() + "' - Not a plugin.");
                 continue;
             }
 
@@ -88,7 +85,6 @@ public class PluginCreateSuiteList extends Task
                 }
             }
 
-            // pluginData.put(pluginName.trim(), basePackage.trim());
             pluginData.add(new PluginData(pluginName.trim(), basePackage.trim(), pluginDirectory.getName()));
         }
 
@@ -104,18 +100,13 @@ public class PluginCreateSuiteList extends Task
         File suiteProjPropertiesFile = new File(suiteProjPropertiesPath);
         Properties suiteProjProperties = pluginUtils.loadProperties(suiteProjPropertiesFile);
 
-        // Iterator<Map.Entry<String, String>> iterator = pluginData.entrySet().iterator();
-
         StringBuilder modulesValue = new StringBuilder();
 
         boolean isFirst = true;
         int newPluginCount = 0;
 
-        // while (iterator.hasNext())
         for (PluginData data : pluginData)
         {
-            // Map.Entry<String, String> entry = iterator.next();
-
             String projectVal = suiteProjProperties.getProperty("project." + data.basePackage);
 
             if (projectVal == null || projectVal.isEmpty())
@@ -149,7 +140,6 @@ public class PluginCreateSuiteList extends Task
             ex.printStackTrace(System.out);
         }
     }
-
 
 }
 
